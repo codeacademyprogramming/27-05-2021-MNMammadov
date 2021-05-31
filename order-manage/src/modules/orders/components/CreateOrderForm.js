@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function CreateOrderForm() {
     const [open, setOpen] = React.useState(false);
-    const [tableNo, setTableNo] = React.useState();
+    const [tableNo, setTableNo] = React.useState(0);
     const [numbOfCoffee, setNumbOfCoffee] = React.useState(1);
     const [specialNote, setSpecialNote] = React.useState("");
     const [coffeeType, setCoffeeType] = React.useState("Americano");
@@ -93,7 +93,7 @@ export default function CreateOrderForm() {
                             </Box>
                             <Box marginBottom={5}>
                                 <TextField
-                                    value={specialNote}
+                                    value={specialNote === "" ? "" : specialNote}
                                     onChange={(evt) => setSpecialNote(evt.target.value)}
                                     label="Special Note"
                                     helperText="Add comment" />
