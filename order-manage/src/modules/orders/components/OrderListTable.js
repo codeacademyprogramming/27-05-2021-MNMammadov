@@ -8,10 +8,12 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import React from "react";
-import ModalChange from './ModalChange';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import EditOrderForm from "./EditOrderForm";
 
 function OrderListTable() {
+    const orderBranch = useSelector(state => state.orders);
 
     return (
         <Box marginTop={2}>
@@ -28,16 +30,20 @@ function OrderListTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>1</TableCell>
-                            <TableCell>americano</TableCell>
-                            <TableCell>5</TableCell>
-                            <TableCell>termoyaderniy olsun</TableCell>
-                            <TableCell>created</TableCell>
-                            <TableCell>
-                                <ModalChange />
-                            </TableCell>
-                        </TableRow>
+                        {
+                            orderBranch.map((order) => (
+                                <TableRow key={order.id}>
+                                    <TableCell>{order.tableNo}</TableCell>
+                                    <TableCell>{order.coffeeType}</TableCell>
+                                    <TableCell>{order.numbOfCoffee}</TableCell>
+                                    <TableCell>{order.specialNote}</TableCell>
+                                    <TableCell>{order.status}</TableCell>
+                                    <TableCell>
+                                        <EditOrderForm order={order} />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        }
                     </TableBody>
                 </Table>
             </TableContainer>

@@ -1,0 +1,4 @@
+export const ORDER_ACTIONS = {
+    ADD_ORDER: "ADD_ORDER",
+    EDIT_ORDER: "EDIT_ORDER",
+};

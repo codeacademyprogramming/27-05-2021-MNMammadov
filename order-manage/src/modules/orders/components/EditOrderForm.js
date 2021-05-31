@@ -8,18 +8,16 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { TextField, InputLabel, Select, MenuItem, Box } from '@material-ui/core';
+import { TextField, Select, MenuItem, FormHelperText, Box } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import { editOrder } from '../actions';
 
-import { useDispatch, useSelector } from "react-redux";
-import { addOrder } from '../actions';
-import { v4 as uuidv4 } from 'uuid';
-
-export default function CreateOrderForm() {
+export default function EditOrderForm({ order }) {
     const [open, setOpen] = React.useState(false);
-    const [tableNo, setTableNo] = React.useState();
-    const [numbOfCoffee, setNumbOfCoffee] = React.useState(1);
-    const [specialNote, setSpecialNote] = React.useState("");
-    const [coffeeType, setCoffeeType] = React.useState("Americano");
+    const [tableNo, setTableNo] = React.useState(order.tableNo);
+    const [numbOfCoffee, setNumbOfCoffee] = React.useState(order.numbOfCoffee);
+    const [specialNote, setSpecialNote] = React.useState(order.specialNote);
+    const [orderStatus, setOrderStatus] = React.useState(order.status);
     const dispatch = useDispatch();
 
     const handleClickOpen = () => {
@@ -30,26 +28,25 @@ export default function CreateOrderForm() {
     };
 
     const handleSubmit = () => {
-        const orderData = {
-            id: uuidv4(),
-            tableNo: tableNo,
-            coffeeType: coffeeType,
-            numbOfCoffee: numbOfCoffee,
-            specialNote: specialNote,
-            status: "CREATED"
-        }
+        const editedOrder = {
+            ...order,
+            tableNo,
+            numbOfCoffee,
+            specialNote,
+            status: orderStatus,
+        };
 
-        dispatch(addOrder(orderData));
+        dispatch(editOrder(editedOrder));
         handleClose();
     }
 
-    const productsBranch = useSelector(state => state.products);
-
     return (
         <div>
-            <Button variant="contained" color="primary" size="small" onClick={handleClickOpen}>
-                Create Order
-            </Button>
+            {order.status !== "DONE" && (
+                <Button variant="contained" color="primary" size="small" onClick={handleClickOpen}>
+                    Edit Order
+                </Button>
+            )}
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Order Details
@@ -66,23 +63,6 @@ export default function CreateOrderForm() {
                                     required
                                 />
                             </Box>
-                            <InputLabel>Select Coffee</InputLabel>
-                            <Box marginBottom={5}>
-                                <Select
-                                    value={coffeeType}
-                                    onChange={(evt) => setCoffeeType(evt.target.value)}
-                                    style={{ width: "12.5vw" }}
-                                >
-                                    {productsBranch.data.map((product) => (
-                                        <MenuItem
-                                            key={product.id}
-                                            value={product.name}
-                                        >
-                                            {product.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </Box>
                             <Box marginBottom={5}>
                                 <TextField
                                     value={numbOfCoffee}
@@ -98,12 +78,24 @@ export default function CreateOrderForm() {
                                     label="Special Note"
                                     helperText="Add comment" />
                             </Box>
+                            <Box marginBottom={5}>
+                                <Select
+                                    value={orderStatus}
+                                    onChange={(evt) => setOrderStatus(evt.target.value)}
+                                    style={{ width: "12.5vw" }}
+                                >
+                                    <MenuItem value="CREATED">CREATED</MenuItem>
+                                    <MenuItem value="IN_PROGRESS">IN_PROGRESS</MenuItem>
+                                    <MenuItem value="DONE">DONE</MenuItem>
+                                </Select>
+                                <FormHelperText>Select Order Status</FormHelperText>
+                            </Box>
                         </Box>
                     </form>
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus onClick={handleSubmit} color="primary">
-                        Place order
+                        Save Changes
                     </Button>
                 </DialogActions>
             </Dialog>
